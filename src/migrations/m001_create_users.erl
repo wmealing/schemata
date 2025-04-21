@@ -5,6 +5,7 @@
 
 id() -> "001".
 
+%% maybe i dont need the conn here.
 up(_Conn) ->
     "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);".
 
