@@ -10,8 +10,11 @@ apply_pending(Conn, Adapter) ->
       fun(Mod) ->
           Id = Mod:id(),
           case lists:member(Id, Applied) of
-              true -> ok;
+              true ->
+                io:format("Migration ID ~s already in database, not running ~n", [Id]),  
+                ok;
               false ->
+                  io:format("Migration ID ~s not found in database, running migration~n", [Id]),
                   Sql = Mod:up(Conn),
                   Adapter:exec(Conn, Sql),
                   my_migrator_repo:record_migration(Conn, Id, Adapter)

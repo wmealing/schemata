@@ -11,4 +11,3 @@ rollback(DbPath, Adapter) ->
     {ok, Conn} = my_migrator_repo:connect(DbPath, Adapter),
     ok = my_migrator_runner:rollback_last(Conn, Adapter),
     ok = my_migrator_repo:close(Conn, Adapter).
-
