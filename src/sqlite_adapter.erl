@@ -1,10 +1,10 @@
 -module(sqlite_adapter).
 
 -export([connect/1, close/1, ensure_tracking_table/1]).
--export([exec/2, applied_migrations/1, record_migrations/2, remove_migration/2]).
+-export([exec/2, applied_migrations/1, record_migration/2, remove_migration/2]).
 
-connect(_Path) ->
-   sqlite3:open(anatom).
+connect(Path) ->
+   sqlite3:open(Path).
 
 close(Conn) ->
    sqlite3:close(Conn).
@@ -15,11 +15,12 @@ ensure_tracking_table(Conn) ->
 
 applied_migrations(Conn) ->
     Sql = "SELECT id FROM schema_migrations ORDER BY id;",
-    Rows = exec(Conn, Sql),
-    [Id || [Id] <- Rows].
+    [_ , {rows, Rows}] = exec (Conn, Sql),
+    [ binary_to_list(element(1,Id)) || Id <- Rows].
 
 
-record_migrations(Conn, Id) ->
+
+record_migration(Conn, Id) ->
     {{Y, M, D}, {H, Min, S}} = calendar:now_to_universal_time(erlang:timestamp()),
     Timestamp = io_lib:format("~4.10.0B-~2.10.0B-~2.10.0B ~2.10.0B:~2.10.0B:~2.10.0B",
                                [Y, M, D, H, Min, S]),

@@ -33,22 +33,23 @@ rollback_last(Conn, Adapter) ->
 
 migration_modules() ->
     {ok, Files} = file:list_dir("src/migrations"),
-    Erls = [F || F <- Files,
-                  filename:extension(F) =:= ".erl",
-                  case filename:basename(F) of
-                      ["m" | _] -> true;
-                      _ -> false
-                  end],
     lists:flatmap(
         fun(F) ->
             _ModStr = filename:rootname(F),
             FullPath = filename:join("src/migrations", F),
-            {ok, {module, Mod}} = compile:file(FullPath, [report, return]),
+            {ok, Mod } = compile:file(FullPath, {outdir, code:lib_dir(my_migrator, ebin)}),
+
+            %% oddly, i need to run this first, or it wont recognise
+            %% the module as current.
+            Mod:module_info(),
+
             case erlang:function_exported(Mod, id, 0) of
-                true -> [Mod];
-                false -> []
+                true ->
+                      [Mod];
+                false ->
+                      []
             end
-        end, Erls).
+        end, Files).
 
 migration_module_by_id(Id) ->
     Mods = migration_modules(),
