@@ -1,6 +1,8 @@
 # 🏛️ Schemata
 
-** Declarative, versioned database schema migrations in pure Erlang.**
+## WARNING: This is alpha quality software, there are likely BETTER libraries out there than this.   
+
+**Declarative, versioned database schema migrations in pure Erlang.**
 
 Schemata helps you define, track, and apply database schema changes using straightforward, Erlang-friendly patterns. No external dependencies, no DSLs — just Erlang.
 
