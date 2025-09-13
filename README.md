@@ -30,19 +30,20 @@ Schemata helps you define, track, and apply database schema changes using straig
 2. Create a migration
 
 ```
-$ erl _build/test/lib/schemata/src/new_migration.erl create_users_table
+$ ./_checkouts/schemata/src/new_migration initial_creation
 ```
 
 It should make a template file in your current projects:
 
+```shell
 src/migrations/
-              └── 20250422_create_users_table.erl
-
+              └── migration_2025_09_13_15_52_49_initial_creation.erl
+```
 
 It creates a template file.
 
-```
--module(m20250422_create_users_table).
+```erlang
+-module(migration_2025_09_13_15_52_49_initial_creation).
 -export([id/0 ,up/1, down/1]).
 
 id() ->
