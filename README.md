@@ -25,7 +25,7 @@ Schemata helps you define, track, and apply database schema changes using straig
 {deps, [
     {schemata, {git, "https://github.com/wmealing/schemata", {tag, "0.1.0"}}}
 ]}.
-
+```
 
 2. Create a migration
 
