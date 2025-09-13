@@ -74,7 +74,7 @@ You can use the built-in schemata_sqlite_adapter or plug in your own.
 
 Configure your database adapter and migration path in your local `config/sys.config`
 
-``
+```
 ApplicationConfig = [
     {schemata, [
         {adapter, schemata_sqlite_adapter},
