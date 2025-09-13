@@ -27,7 +27,7 @@ Schemata helps you define, track, and apply database schema changes using straig
 ]}.
 ```
 
-2. Create a migration
+### 2. Create a migration
 
 ```
 $ ./_checkouts/schemata/src/new_migration initial_creation
@@ -57,14 +57,14 @@ down() ->
 
 ```
 
-3. Run migrations (example with the sqlite_adapter).
+### 3. Run migrations (example with the sqlite_adapter).
 
 
 ```
 schemata:migrate(DbConn, schemata_sqlite_adapter).
 ```
 
-📁 Migration Structure
+## 📁 Migration Structure
 
 Each migration is an Erlang module that exports up/0 and down/0. Migrations are run in filename order based on their timestamp prefix.
 
@@ -84,7 +84,7 @@ ApplicationConfig = [
 
 ```
 
-🧪 Testing
+## 🧪 Testing
 
 The current test suite runs using the sqlite adapter.
 
@@ -93,16 +93,16 @@ eunit:test(schemata).
 ```
 
 
-🗺 Roadmap
+## 🗺 Roadmap
 
  Database diffing & auto-generation
  Interactive CLI
  CI-safe dry-run mode
 
-📜 License
+## 📜 License
 
 MIT License. See LICENSE for details.
 
-🧠 Inspiration
+## 🧠 Inspiration
 
 Schemata was inspired by tools like Ragtime, Flyway, and Sqitch — reimagined for the Erlang ecosystem.
