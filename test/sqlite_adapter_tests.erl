@@ -2,22 +2,23 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-top_setup() ->
-    file:delete("something.db", []).
+-export([sqlite_connect_makes_file/0, sqlite_close_doesnt_delete_files/0]).
 
+top_setup() ->
+    file:delete("foo.db", []).
 
 top_cleanup(_) ->
-    file:delete("something.db", []).
+    file:delete("foo.db", []).
 
 sqlite_connect_makes_file() ->
-    {ok, S} = sqlite_adapter:connect(something),
-    ?assert(filelib:is_file("something.db") == true).
+    {ok, ConnInfo} = sqlite_adapter:connect(#{dbname => anonymous, file => "something.db"}),
+    ?assert(filelib:is_file("something.db") == true),
+    sqlite_adapter:close(ConnInfo).
 
 sqlite_close_doesnt_delete_files() ->
-    Conn = sqlite_adapter:connect(something),
-    sqlite_adapter:close(Conn),
+    {ok, ConnInfo} = sqlite_adapter:connect(#{dbname => anonymous, file => "something.db"}),
+    sqlite_adapter:close(ConnInfo),
     ?assert(filelib:is_file("./something.db") == true).
-
 
 sqlite_connect_test_() ->
     {setup,
