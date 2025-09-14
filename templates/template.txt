@@ -1,0 +1,12 @@
+-module({{migration_name}}).
+-export([id/0 ,up/1, down/1]).
+
+id() ->
+    "CHANGE-MY-ID".
+
+up(_Conn) ->
+    "SQL CREATE COMMAND HERE".
+
+down(_Conn) ->
+    "SQL ROLLBACK COMMAND HERE". 
+

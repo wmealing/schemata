@@ -3,22 +3,25 @@
 -export([connect/1, close/1, ensure_tracking_table/1]).
 -export([exec/2, applied_migrations/1, record_migration/2, remove_migration/2]).
 
-connect(Path) ->
-   sqlite3:open(Path).
+-include_lib("eunit/include/eunit.hrl").
 
-close(Conn) ->
-   sqlite3:close(Conn).
+connect(#{file := Path, dbname := DbName} = ConnectionInfo) ->
+    {ok, Pid} = sqlite3:open(DbName, [{file, Path}]),
+    {ok, ConnectionInfo#{pid => Pid}}.
+
+close(#{pid := Pid} = ConnectionInfo) ->
+    sqlite3:close(Pid),
+    {ok, maps:without([pid], ConnectionInfo)}.
 
 ensure_tracking_table(Conn) ->
+    Pid = maps:get(pid, Conn),
     Sql = "CREATE TABLE IF NOT EXISTS schema_migrations (id TEXT PRIMARY KEY, applied_at TEXT);",
-    exec(Conn, Sql).
+    exec(Pid, Sql).
 
-applied_migrations(Conn) ->
+applied_migrations(Pid) ->
     Sql = "SELECT id FROM schema_migrations ORDER BY id;",
-    [_ , {rows, Rows}] = exec (Conn, Sql),
+    [_ , {rows, Rows}] = exec (Pid, Sql),
     [ binary_to_list(element(1,Id)) || Id <- Rows].
-
-
 
 record_migration(Conn, Id) ->
     {{Y, M, D}, {H, Min, S}} = calendar:now_to_universal_time(erlang:timestamp()),
@@ -33,5 +36,4 @@ remove_migration(Conn, Id) ->
     exec(Conn, lists:flatten(Sql)).
 
 exec(Conn, Sql) ->
-    io:format("Executing SQL: ~s~n", [Sql]),
     sqlite3:sql_exec(Conn, Sql).

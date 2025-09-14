@@ -4,7 +4,7 @@
 
 -module(new_migration).
 
--export([main/0, main/1,usage/0]).
+-export([main/1,usage/0]).
 
 
 create_migrations_directory() ->
@@ -20,7 +20,7 @@ get_migration_filename(MigrationName) ->
     {{Year,Month,Day},{Hour,Minute,Second}} = calendar:now_to_universal_time(os:timestamp()),
 
     % Format the string
-    io_lib:format("~4w-~2..0w-~2..0w_~2..0w-~2..0w-~2..0w_~s.erl",
+    io_lib:format("migration_~4w_~2..0w_~2..0w_~2..0w_~2..0w_~2..0w_~s.erl",
                   [Year, Month, Day, Hour, Minute, Second, MigrationName]).
 
 
@@ -46,26 +46,31 @@ generate_file(TemplatePath, OutputPath, Data) ->
 
 replace_placeholders(String, Data) ->
     % Simple replacement for demonstration. For more complex templating, consider a library.
-    String1 = string:replace(String, "{{name}}", proplists:get_value(name, Data, "Guest"), all),
-    string:replace(String1, "{{date}}", proplists:get_value(date, Data, "Unknown Date"), all).
+    string:replace(String, "{{migration_name}}", proplists:get_value(migration_name, Data, "FIXME"), all).
+
+main(Args) ->
+
+    case Args of
+        [] ->
+            usage();
+
+        [MigrationName] ->
+
+            MigrationFileName = get_migration_filename(MigrationName),
+            MigrationBaseName = filename:rootname(MigrationFileName),
+            DestinationFile = "./src/migrations/" ++ MigrationFileName,
+
+            io:format("creating migration file ~s~n", [DestinationFile]),
+
+            %% This is a bit weird, but i'm not seeing a better way to do it.
+            ScriptPath = escript:script_name(),
+            TemplateParentDirectory = filename:dirname (filename:dirname(ScriptPath)),
+            TemplateFile = TemplateParentDirectory ++ "/templates/template.txt",
+            create_migrations_directory(),
+            generate_file(TemplateFile, DestinationFile, [{migration_name, MigrationBaseName}, {date, "2025-09-13"}])
+    end.
 
 
-
-main([MigrationName]) ->
-        MigrationFileName = get_migration_filename(MigrationName),
-        DestinationFile = "./src/migrations/" ++ MigrationFileName,
-
-        io:format("creating migration file ~s~n", [DestinationFile]),
-
-        % This is a bit weird, but i'm not seeing a better way to do it.
-        ScriptPath = escript:script_name(),
-        TemplateParentDirectory = filename:dirname (filename:dirname(ScriptPath)),
-        TemplateFile = TemplateParentDirectory ++ "/templates/template.txt",
-        create_migrations_directory(),
-        generate_file(TemplateFile, DestinationFile, [{migration_name, MigrationFileName}, {date, "2025-09-13"}]).
-
-main() ->
-    usage().
 
 usage() ->
     io:format("usage: new-migration migration-name\n"),
