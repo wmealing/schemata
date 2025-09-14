@@ -1,0 +1,10 @@
+
+%%% File: src/schemata.app.src
+{application, schemata,
+ [{description, "A simple migration tool like Ragtime"},
+  {vsn, "0.1.0"},
+  {modules, [schemata, schemata_runner]},
+  {registered, []},
+  {applications, [kernel, stdlib]},
+  {mod, {schemata_app, []}}]}.
+
